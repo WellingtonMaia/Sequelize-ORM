@@ -1,6 +1,7 @@
 
 const LevelsRepository = require('../repositories/LevelsRepository');
 const repository = new LevelsRepository();
+const ErrorsRequest = require('./Exceptions/ErrorsRequest');
 
 class LevelsController {
   static async getAllLevels(req, res) {
@@ -29,9 +30,12 @@ class LevelsController {
     }
   }
 
-  static async store({ body }, res) {
+  static async store(req, res) {
     try {
-      const result = await repository.create(body);
+      
+      ErrorsRequest.validateRequest(req);
+
+      const result = await repository.create(req.body);
 
       return res.status(201).json(result);
     } catch (error) {
@@ -39,10 +43,12 @@ class LevelsController {
     }
   }
 
-  static async update({ body, params }, res) {
+  static async update(req, res) {
     try {
-      const id = params.id;
-      const level = Object.assign({}, body, {id: id});
+      ErrorsRequest.validateRequest(req);
+
+      const { id } = req.params;
+      const level = Object.assign({}, req.body, {id: id});
     
       const result = await repository.update(level, id);
     

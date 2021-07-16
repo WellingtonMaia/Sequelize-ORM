@@ -2,14 +2,15 @@ const router = require('express').Router({
   mergeParams: true
 });
 const ClassesRopository = require('../controllers/ClassesController');
+const validate = require('./validation/classesValidation').validate;
 
 router.get('/', ClassesRopository.getAllClasses);
 
-router.post('/', ClassesRopository.store);
+router.post('/', validate, ClassesRopository.store);
 
 router.get('/:id', ClassesRopository.getById);
 
-router.put('/:id', ClassesRopository.update);
+router.put('/:id', validate, ClassesRopository.update);
 
 router.delete('/:id', ClassesRopository.delete);
 

@@ -1,5 +1,6 @@
 const ClassesRepository = require('../repositories/ClassesRepository');
 const repository = new ClassesRepository();
+const ErrorsRequest = require('./Exceptions/ErrorsRequest');
 
 class ClassesController {
   static async getAllClasses(req, res) {
@@ -29,9 +30,11 @@ class ClassesController {
     }
   }
 
-  static async store({ body }, res) {
+  static async store(req, res) {
     try {
-      const result = await repository.create(body);
+      ErrorsRequest.validateRequest(req);
+
+      const result = await repository.create(req.body);
 
       return res.status(201).json(result);
     } catch (error) {
@@ -39,9 +42,11 @@ class ClassesController {
     }
   }
 
-  static async update({ params, body }, res) {
+  static async update(req, res) {
     try {
-      const classBody = Object.assign({}, body, { id: params.id });
+      ErrorsRequest.validateRequest(req);
+
+      const classBody = Object.assign({}, req.body, { id: req.params.id });
 
       const updatedClass = await repository.update(classBody, classBody.id); 
 

@@ -1,5 +1,6 @@
 const EnrollmentRepository = require('../repositories/EnrollmentRepository');
 const repository = new EnrollmentRepository();
+const ErrorsRequest = require('./Exceptions/ErrorsRequest');
 
 class EnrollmentController {
   static async getAllEnrollmentConfirmed({ people }, res) {
@@ -27,8 +28,11 @@ class EnrollmentController {
     }
   }
 
-  static async store({people, body}, res) {
+  static async store(req, res) {
     try {
+        ErrorsRequest.validateRequest(req);
+
+        const { body, people } = req;
         const enrollmentObject = Object.assign(
           {}, 
           body, 
@@ -43,8 +47,11 @@ class EnrollmentController {
     }
   }
 
-  static async update ({ params, body, people }, res) {
+  static async update (req, res) {
     try {
+      ErrorsRequest.validateRequest(req);
+      
+      const { body, people, params } = req;
       const enrollmentObject = Object.assign(
         {},
         body,

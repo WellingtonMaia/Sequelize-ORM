@@ -1,5 +1,6 @@
 const PeopleRepository = require('../repositories/index').PeopleRepository;
 const repository = new PeopleRepository();
+const ErrorsRequest = require('./Exceptions/ErrorsRequest');
 
 class PeopleController {
   static async getAllActivePeople (req, res) {
@@ -33,6 +34,9 @@ class PeopleController {
 
   static async store (req, res) {
     try {
+      
+      ErrorsRequest.validateRequest(req);
+
       const body = req.body;
       const result = await repository.create(body);
       
@@ -42,10 +46,13 @@ class PeopleController {
     }
   }
 
-  static async update ({body, params}, res) {
+  static async update (req, res) {
     try {
-      const id = params.id;
-      const person = Object.assign({}, body, { id: id });
+
+      ErrorsRequest.validateRequest(req)
+      
+      const id = req.params.id;
+      const person = Object.assign({}, req.body, { id: id });
 
       const personUpdate = await repository.update(person, id);
       

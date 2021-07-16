@@ -20,34 +20,10 @@ module.exports = (sequelize, DataTypes) => {
   };
 
   People.init({
-    name: {
-      type: DataTypes.STRING,
-      validate: {
-        isValid: (value) => {
-          if (String(value).length < 3) {
-            throw new Error('Name is invalid!');
-          }
-        }
-      }
-    },
+    name: DataTypes.STRING,
     active: DataTypes.BOOLEAN,
-    email: {
-      type: DataTypes.STRING,
-      validate: {
-        isEmail: {
-          msg: 'This is not e-mail!'
-        }
-      }
-    },
-    role: {
-      type: DataTypes.STRING,
-      validate: {
-        isIn: {
-          args: [['student', 'teacher']],
-          msg: "Role have be 'student' or 'teacher'"
-        }
-      }
-    }
+    email: DataTypes.STRING,
+    role: DataTypes.STRING,
   }, {
     sequelize,
     modelName: 'People',

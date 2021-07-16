@@ -2,16 +2,18 @@ const router = require('express').Router({
   mergeParams: true
 });
 const EnrollmentController = require('../controllers/EnrollmentController');
+const validate = require('./validation/enrollmentValidation').validate;
+
 
 router.get('/', EnrollmentController.getAllEnrollmentConfirmed);
 
 router.get('/all', EnrollmentController.getAllEnrollment);
 
-router.post('/', EnrollmentController.store);
+router.post('/', validate, EnrollmentController.store);
 
 router.get('/:id', EnrollmentController.getById);
 
-router.put('/:id', EnrollmentController.update);
+router.put('/:id', validate, EnrollmentController.update);
 
 router.delete('/:id', EnrollmentController.delete);
 
