@@ -1,10 +1,11 @@
-const peopleRepository = require('../../repositories/peopleRepository');
+const PeopleRepository = require('../../repositories/PeopleRepository');
+const repository = new PeopleRepository();
 
 class EnrollmentMiddleware {
   static async setPerson(req, res, next) {
     try {
       const { personId } = req.params;
-      const person = await peopleRepository.findById(personId);
+      const person = await repository.getById(personId);
       req.people = person;
       next();
     } catch (error) {

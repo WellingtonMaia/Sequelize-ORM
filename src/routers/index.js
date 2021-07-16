@@ -3,6 +3,7 @@ const peopleRoute = require('./peopleRoute');
 const levelsRoute = require('./levelsRoute');  
 const classesRoute = require('./classesRoute');
 const enrollmentRoute = require('./enrollmentRoute');
+const enrolledRoute = require('./enrolledRouter');
 const EnrollmentMiddleware = require('../controllers/middlerware/EnrollmentMiddleware');
 
 module.exports = app => {
@@ -15,7 +16,9 @@ module.exports = app => {
   });
 
   app.use(`${prefix}/people`, peopleRoute); 
-  
+
+  app.use(`${prefix}/people/enrollment`, enrolledRoute);
+
   app.use(`${prefix}/people/:personId/enrollment`, EnrollmentMiddleware.setPerson);
   app.use(`${prefix}/people/:personId/enrollment`, enrollmentRoute); 
   

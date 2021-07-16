@@ -1,4 +1,6 @@
-const repository = require('../repositories/levelsRepository');
+
+const LevelsRepository = require('../repositories/LevelsRepository');
+const repository = new LevelsRepository();
 
 class LevelsController {
   static async getAllLevels(req, res) {
@@ -15,7 +17,11 @@ class LevelsController {
     try {
       const { id } = req.params;
       
-      const level = await repository.findById(id);
+      const level = await repository.getById(
+        id,
+        'Level not found',
+        true
+      );
       
       return res.status(200).json(level);  
     } catch (error) {
@@ -38,7 +44,7 @@ class LevelsController {
       const id = params.id;
       const level = Object.assign({}, body, {id: id});
     
-      const result = await repository.update(level);
+      const result = await repository.update(level, id);
     
       return res.status(201).json(result);
     } catch (error) {
@@ -55,6 +61,18 @@ class LevelsController {
       return res.status(200).json({
         message: `Level with id(${id}) deleted!`
       });  
+    } catch (error) {
+      return res.status(404).json(error.message);
+    }
+  }
+
+  static async restore({ params }, res) {
+    try {
+      const id = params.id;
+      
+      await repository.restore(id);
+
+      return res.status(201).json({ message: `Level with id(${id}) restored` });
     } catch (error) {
       return res.status(404).json(error.message);
     }

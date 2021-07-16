@@ -11,4 +11,6 @@ router.put('/:id', LevelsController.update);
 
 router.delete('/:id', LevelsController.delete);
 
+router.post('/:id/restore', LevelsController.restore);
+
 module.exports = router;

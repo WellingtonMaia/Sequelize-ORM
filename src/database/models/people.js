@@ -1,4 +1,6 @@
 'use strict';
+const { all } = require('./scope/allPeople');
+
 const {
   Model
 } = require('sequelize');
@@ -10,19 +12,54 @@ module.exports = (sequelize, DataTypes) => {
         foreignKey: 'teacher_id'
       });
       People.hasMany(models.Enrollment, {
-        foreignKey: 'student_id'
+        foreignKey: 'student_id', 
+        scope: { status: 'confirmed' },
+        as: 'enrolledClasses'
       });
     }
   };
 
   People.init({
-    name: DataTypes.STRING,
+    name: {
+      type: DataTypes.STRING,
+      validate: {
+        isValid: (value) => {
+          if (String(value).length < 3) {
+            throw new Error('Name is invalid!');
+          }
+        }
+      }
+    },
     active: DataTypes.BOOLEAN,
-    email: DataTypes.STRING,
-    role: DataTypes.STRING
+    email: {
+      type: DataTypes.STRING,
+      validate: {
+        isEmail: {
+          msg: 'This is not e-mail!'
+        }
+      }
+    },
+    role: {
+      type: DataTypes.STRING,
+      validate: {
+        isIn: {
+          args: [['student', 'teacher']],
+          msg: "Role have be 'student' or 'teacher'"
+        }
+      }
+    }
   }, {
     sequelize,
     modelName: 'People',
+    paranoid: true,
+    defaultScope: {
+      where: {
+        active: true
+      }
+    },
+    scopes: {
+      all
+    }
   });
 
   return People;

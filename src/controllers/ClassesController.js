@@ -1,9 +1,11 @@
-const repository = require('../repositories/classesRepository');
+const ClassesRepository = require('../repositories/ClassesRepository');
+const repository = new ClassesRepository();
 
 class ClassesController {
   static async getAllClasses(req, res) {
     try {
-      const result = await repository.all();
+      const query = req.query;
+      const result = await repository.all(query);
 
       return res.status(200).json(result);
     } catch (error) {
@@ -15,9 +17,13 @@ class ClassesController {
     try {
       const { id } = req.params;
 
-      const entity = await repository.findById(id);
+      const classEntity = await repository.getById(
+        id,
+        undefined, 
+        true
+      );
       
-      return res.status(200).json(entity);
+      return res.status(200).json(classEntity);
     } catch (error) {
       return res.status(500).json(error.message);
     }
@@ -37,7 +43,7 @@ class ClassesController {
     try {
       const classBody = Object.assign({}, body, { id: params.id });
 
-      const updatedClass = await repository.update(classBody); 
+      const updatedClass = await repository.update(classBody, classBody.id); 
 
       return res.status(201).json(updatedClass);
     } catch (error) {
@@ -56,6 +62,18 @@ class ClassesController {
       });
     } catch (error) {
       return res.status(500).json(error.message);
+    }
+  }
+
+  static async restore({ params }, res) {
+    try {
+      const id = params.id;
+      
+      await repository.restore(id);
+
+      return res.status(201).json({ message: `Class with id(${id}) restored` });
+    } catch (error) {
+      return res.status(404).json(error.message);
     }
   }
 }

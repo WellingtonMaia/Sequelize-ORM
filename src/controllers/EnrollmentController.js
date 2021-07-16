@@ -1,9 +1,11 @@
-const repository = require('../repositories/enrollmentRepository');
+const EnrollmentRepository = require('../repositories/EnrollmentRepository');
+const repository = new EnrollmentRepository();
 
 class EnrollmentController {
-  static async getAllEnrollment({ people }, res) {
+  static async getAllEnrollmentConfirmed({ people }, res) {
     try {
       const studentId = people.id
+      
       const enrollment = await repository.all(studentId);
       
       return res.status(200).json(enrollment);
@@ -63,6 +65,55 @@ class EnrollmentController {
       await repository.delete(people.id, id);
 
       return res.status(200).json(`Register with id(${id}) deleted!`);
+    } catch (error) {
+      return res.status(404).json(error.message);
+    }
+  }
+
+  static async restore({ params }, res) {
+    try {
+      const id = params.id;
+      
+      await repository.restore(id);
+
+      return res.status(201).json({ message: `Register with id(${id}) restored` });
+    } catch (error) {
+      return res.status(404).json(error.message);
+    }
+  }
+
+  static async getAllEnrollment({ people }, res) {
+    try {
+      const id = people.id;
+      
+      const result = await repository.getEnrolledClasses(id);
+
+      return res.status(200).json(result);
+    } catch (error) {
+      return res.status(404).json(error.message);      
+    }
+  }
+
+  static async getEnrollmentByClass({ params }, res) {
+    try {
+      
+      const classId = params.classId
+      
+      const result = await repository.getAllEnrollmentByClass(classId);
+
+      return res.status(200).json(result);
+    } catch (error) {
+      return res.status(404).json(error.message);
+    }
+  }
+
+  static async getCrowdedClasses(req, res) {
+    try {
+      const classCapacity = 2; //can be other values
+      
+      const result = await repository.getCrowdedClasses(classCapacity);
+
+      return res.status(200).json(result.count);
     } catch (error) {
       return res.status(404).json(error.message);
     }
